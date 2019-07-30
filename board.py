@@ -12,20 +12,20 @@ class Board:
         return cls.history[-1]
 
     @classmethod
-    def player_win(cls):
-        cls.player += 1
-        cls.history.append('P')
-        # Scroll to new line
-        # Show player win circle
-        return 'P'
-
-    @classmethod
-    def banker_win(cls):
-        cls.banker += 1
-        cls.history.append('B')
-        # Scroll to new line
-        # Show banker win circle
-        return 'B'
+    def winner(cls, winner):
+        if winner == 'P':
+            cls.player += 1
+            cls.history.append('P')
+            # Scroll to new line
+            # Show player win circle
+            return 'P'
+        elif winner == 'B':
+            cls.banker += 1
+            cls.history.append('B')
+            # Scroll to new line
+            # Show banker win circle
+            return 'B'
+        pass
 
     # Calculate shoe TI
     @classmethod

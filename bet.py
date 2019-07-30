@@ -22,12 +22,15 @@ class Bet:
         return cls.currentBet
 
     @classmethod
-    def bet_player(cls):
-        return 'P'
+    def reset_current_bet(cls):
+        cls.currentBet = 0
 
     @classmethod
-    def bet_banker(cls):
-        return 'B'
+    def bet_side(cls, side):
+        if side == 'P':
+            return 'P'
+        elif side == 'B':
+            return 'B'
         #Save bet on the prep line
 
     #profit method

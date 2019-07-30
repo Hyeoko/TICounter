@@ -1,31 +1,74 @@
-<Screen>
+<Screen>:
     GridLayout:
+        cols:1
+        size: root.width, root.height
+
         GridLayout:
+            cols:2
+            rows:1
+
             Button:
                 text:"B"
-            Button:
-                text:"F2"
-            Button:
-                text:"F3"
-            Button:
-                text:"F5"
-            Button:
-                text:"F8"
-            Button:
-                text:"L2"
-            Button:
-                text:"L1"
-            Button:
-                text:"L2"
-            Button:
-                text:"L3"
-            Button:
-                text:"L4"
-            Button:
-                text:"L5"
+                on_press: root.bet_pressed('B')
+
+            GridLayout:
+                cols:1
+                rows:2
+                GridLayout:
+                    cols:4
+                    Button:
+                        text:"F2"
+                        on_press: root.bet_pressed('F', 0)
+                    Button:
+                        text:"F3"
+                        on_press: root.bet_pressed('F', 1)
+                    Button:
+                        text:"F5"
+                        on_press: root.bet_pressed('F', 2)
+                    Button:
+                        text:"F8"
+                        on_press: root.bet_pressed('F', 3)
+
+                GridLayout:
+                    cols:6
+                    Button:
+                        text:"L2"
+                        on_press: root.bet_pressed('L', 0)
+                    Button:
+                        text:"L1"
+                        on_press: root.bet_pressed('L', 1)
+                    Button:
+                        text:"L2"
+                        on_press: root.bet_pressed('L', 2)
+                    Button:
+                        text:"L3"
+                        on_press: root.bet_pressed('L', 3)
+                    Button:
+                        text:"L4"
+                        on_press: root.bet_pressed('L', 4)
+                    Button:
+                        text:"L5"
+                        on_press: root.bet_pressed('L', 5)
 
         GridLayout:
-            GridLayout:
+            cols:2
 
-            ScrollView:
-                Image
+            Button:
+                text:"Player"
+                background_color:0,0,1,1
+                on_press: root.board_pressed('P')
+
+            Button:
+                text:"Banker"
+                background_color:1,0,0,1
+                on_press: root.board_pressed('B')
+
+            Button:
+                text:"Bet Player"
+                background_color:0.6,0.6,1,1
+                on_press: root.bet_side('P')
+
+            Button:
+                text:"Bet Banker"
+                background_color:1,0.6,0.6,1
+                on_press: root.bet_side('B')
