@@ -14,8 +14,8 @@ class Screen(Widget):
     myBet = ObjectProperty(None)
     mySide = ObjectProperty(None)
 
-    @staticmethod
-    def bet_pressed(bet, ind=None):
+    # @staticmethod
+    def bet_pressed(self, bet, ind=None):
         if bet == 'B':
             Bet.base_bet()
         elif bet == "F":
@@ -24,22 +24,25 @@ class Screen(Widget):
             Bet.ladder_bet(ind)
         else:
             pass
+        self.myBet = Bet.get_current_bet()
         print("Current Bet:", Bet.get_current_bet())
 
     def bet_side(self, side):
         if self.myBet is None:
             print("You must pick your bet amount!")
-        self.mySide = Bet.bet_side(side)
+        else:
+            self.mySide = Bet.bet_side(side)
 
     # @staticmethod
     def board_pressed(self, winner):
         last_winner = Board.winner(winner)
-        if self.mySide is not None:
+        if self.mySide == 'P' or self.mySide == 'B':
             Bet.bet_result(self.mySide == last_winner)
+            self.mySide = ''
         # print("My bet: ", self.myBet)
         print(Board.history)
         print("My Profit:", Bet.profit)
-        Bet.reset_current_bet()
+        # Bet.reset_current_bet()
 
 
 class TICounterApp(App):
