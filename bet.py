@@ -2,6 +2,11 @@ class Bet:
     base = 1
     theForce = [2, 3, 5, 8]
     theLadder = [2, 1, 2, 3, 4, 5]
+    placeHistory = []
+    sideHistory = []
+    amtHistory = []
+    profitHistory = []
+
     currentBet = 0
     profit = 0
 

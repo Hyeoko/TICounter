@@ -30,11 +30,13 @@ class Board:
     # Calculate shoe TI
     @classmethod
     def calc_shoe_ti(cls):
-        if len(cls.history) != 0:
-            if cls.history[-2] != cls.history[-1]:
+        count = 1
+        while len(cls.history) != 0 and count < len(cls.history):
+            if cls.history[count - 1] != cls.history[count]:
                 cls.shoeTI += 1
             else:
                 cls.shoeTI -= 1
+            count += 1
         return cls.shoeTI
 
     # Calculate Pre-TI

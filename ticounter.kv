@@ -6,7 +6,7 @@
         GridLayout:
             cols:2
             rows:1
-
+            size_hint_y: 0.5
             Button:
                 text:"B"
                 on_press: root.bet_pressed('B')
@@ -52,7 +52,23 @@
 
         GridLayout:
             cols:2
+            GridLayout:
+                rows:2
+                GridLayout:
 
+                Button:
+                    text:"Export to Excel"
+                    size_hint_y:0.2
+                    background_color:0, 1, 0, 1
+                    on_press: root.export_to_excel()
+
+            GridLayout:
+
+
+
+        GridLayout:
+            cols:2
+            size_hint_y:0.5
             Button:
                 text:"Player"
                 background_color:0,0,1,1
