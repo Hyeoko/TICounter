@@ -24,13 +24,16 @@ class Screen(Widget):
     def bet_pressed(self, bet, ind=None):
         if bet == 'B':
             Bet.base_bet()
+            self.myBet = 'B'
         elif bet == "F":
             Bet.force_bet(ind)
+            self.myBet = 'F' + str(Bet.get_current_bet())
         elif bet == "L":
             Bet.ladder_bet(ind)
+            self.myBet = 'L' + str(Bet.get_current_bet())
         else:
             pass
-        self.myBet = Bet.get_current_bet()
+
         print("Current Bet:", Bet.get_current_bet())
 
     def bet_side(self, side):
@@ -57,10 +60,10 @@ class Screen(Widget):
     @staticmethod
     def print_worksheet(worksheet):
         board = Board.history
-        betPlace = Bet.placeHistory
-        betSide = Bet.sideHistory
-        betAmt = Bet.amtHistory
-        betProfit = Bet.profitHistory
+        bet_place = Bet.placeHistory
+        bet_side = Bet.sideHistory
+        bet_amt = Bet.amtHistory
+        bet_profit = Bet.profitHistory
 
         worksheet["A1"] = "Board"
         worksheet["B1"] = "Bet Side"
@@ -72,14 +75,14 @@ class Screen(Widget):
                 worksheet.cell(column=1, row=i + 2, value=board[i]).alignment = Alignment(horizontal='right')
             else:
                 worksheet.cell(column=1, row=i + 2, value=board[i])
-            if i < len(betPlace):
-                if betSide[i] == 'B':
-                    worksheet.cell(column=2, row=betPlace[i], value=betSide[i]).alignment = Alignment(
-                        horizontal='right')
+            if i < len(bet_place):
+                if bet_side[i] == 'B':
+                    worksheet.cell(column=2, row=bet_place[i], value=bet_side[i]).alignment = \
+                        Alignment(horizontal='right')
                 else:
-                    worksheet.cell(column=2, row=betPlace[i], value=betSide[i])
-                worksheet.cell(column=3, row=betPlace[i], value=betAmt[i])
-                worksheet.cell(column=4, row=betPlace[i], value=betProfit[i])
+                    worksheet.cell(column=2, row=bet_place[i], value=bet_side[i])
+                worksheet.cell(column=3, row=bet_place[i], value=bet_amt[i]).alignment = Alignment(horizontal='right')
+                worksheet.cell(column=4, row=bet_place[i], value=bet_profit[i])
 
     def export_to_excel(self):
         try:
