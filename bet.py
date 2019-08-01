@@ -23,6 +23,14 @@ class Bet:
         cls.profit = 0
 
     @classmethod
+    def mistake(cls):
+        del cls.placeHistory[-1]
+        del cls.sideHistory[-1]
+        del cls.amtHistory[-1]
+        cls.profitHistory[-1]
+        cls.profit -= cls.currentBet
+
+    @classmethod
     def profit_reset(cls):
         cls.profit = 0
 

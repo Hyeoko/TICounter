@@ -57,15 +57,15 @@ class Screen(Widget):
                 self.total_profit.text = 'Total Profit: ' + str(Bet.total_profit())
                 self.profit.text = 'Current Profit: ' + str(Bet.profit)
             self.myBet = 'B'
-            self.current_bet.text = 'Betting: B'
+            self.current_bet.text = 'B betting'
         elif bet == "F":
             Bet.force_bet(ind)
             self.myBet = 'F' + str(Bet.get_current_bet())
-            self.current_bet.text = 'Betting: F' + str(Bet.get_current_bet())
+            self.current_bet.text = 'F' + str(Bet.get_current_bet()) + ' betting'
         elif bet == "L":
             Bet.ladder_bet(ind)
             self.myBet = 'L' + str(Bet.get_current_bet())
-            self.current_bet.text = 'Betting: L' + str(Bet.get_current_bet())
+            self.current_bet.text = 'L' + str(Bet.get_current_bet()) + ' betting'
         else:
             pass
 
@@ -74,6 +74,7 @@ class Screen(Widget):
             print("You must pick your bet amount!")
         else:
             self.mySide = Bet.bet_side(side)
+            self.current_bet.text += ' ' + side
             Bet.placeHistory.append(len(Board.history) + 2)
             Bet.sideHistory.append(self.mySide)
             Bet.amtHistory.append(self.myBet)
@@ -92,11 +93,25 @@ class Screen(Widget):
         self.shoe_ti.text = 'Shoe TI: ' + str(Board.calc_shoe_ti())
         self.pre_ti.text = 'Pre-TI: ' + str(Board.calc_pre_ti())
 
-        # Print on Scrollview
+        # Print on ScrollView
         if last_winner == 'P':
-            self.board.text += last_winner + '\n'
+            self.board.text += '\n   ' + last_winner
         elif last_winner == 'B':
-            self.board.text += '                ' + last_winner + '\n'
+            self.board.text += '\n                ' + last_winner
+
+    def mistake(self):
+        # Deletes last winner from ScrollView
+        self.board.text = self.board.text.rstrip('BP')
+        self.board.text = self.board.text.rstrip()
+
+        # Undo last betting and profit make/lost from it
+        if len(Bet.placeHistory) != 0 and Bet.placeHistory[-1] == len(Board.history) + 1:
+            self.mySide = Bet.sideHistory[-1]
+            Bet.mistake()
+            self.profit.text = 'Current Profit: ' + str(Bet.profit)
+        Board.mistake()
+
+
 
     @staticmethod
     def print_worksheet(worksheet):

@@ -3,10 +3,10 @@ class Board:
     banker = 0
     history = []
 
-    ind = 1
-    shoeTI = 0
-    inGameTI = 0
-    preTI = 0
+    # ind = 1
+    # shoeTI = 0
+    # inGameTI = 0
+    # preTI = 0
 
     @classmethod
     def reset(cls):
@@ -14,10 +14,19 @@ class Board:
         cls.banker = 0
         cls.history = []
 
-        cls.ind = 1
-        cls.shoeTI = 0
+        # cls.ind = 1
+        # cls.shoeTI = 0
         cls.inGameTI = 0
-        cls.preTI = 0
+        # cls.preTI = 0
+
+    @classmethod
+    def mistake(cls):
+        cancel = cls.history[-1]
+        if cancel == 'P':
+            cls.player -= 1
+        elif cancel == 'B':
+            cls.banker -= 1
+        del cls.history[-1]
 
     @classmethod
     def last_winner(cls):
@@ -42,14 +51,14 @@ class Board:
     # Calculate shoe TI
     @classmethod
     def calc_shoe_ti(cls):
+        shoe_ti = 0
         if len(cls.history) > 1:
-            if cls.history[cls.ind] != cls.history[cls.ind - 1]:
-                cls.shoeTI += 1
-                cls.ind += 1
-            elif cls.history[cls.ind] == cls.history[cls.ind - 1]:
-                cls.shoeTI -= 1
-                cls.ind += 1
-        return cls.shoeTI
+            for i in range(1, len(cls.history)):
+                if cls.history[i] != cls.history[i - 1]:
+                    shoe_ti += 1
+                elif cls.history[i] == cls.history[i - 1]:
+                    shoe_ti -= 1
+        return shoe_ti
 
     # Calculate Pre-TI
     @classmethod
