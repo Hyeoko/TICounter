@@ -46,9 +46,9 @@ class Bet:
             return 'P'
         elif side == 'B':
             return 'B'
-        #Save bet on the prep line
+        return ''
 
-    #profit method
+    # Profit method
     @classmethod
     def bet_result(cls, win):
         if win:

@@ -5,6 +5,7 @@ import kivy
 from kivy.app import App
 from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.scrollview import ScrollView
 from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty
@@ -29,6 +30,8 @@ class Screen(Widget):
     shoe_ti = ObjectProperty(None)
     in_game_ti = ObjectProperty(None)
     pre_ti = ObjectProperty(None)
+
+    board = ObjectProperty(None)
 
     # @staticmethod
     def bet_pressed(self, bet, ind=None):
@@ -76,13 +79,18 @@ class Screen(Widget):
 
         self.shoe_ti.text = 'Shoe TI: ' + str(Board.calc_shoe_ti())
         self.pre_ti.text = 'Pre-TI: ' + str(Board.calc_pre_ti())
+
+        if last_winner == 'P':
+            self.board.text += last_winner + '\n'
+        elif last_winner == 'B':
+            self.board.text += '                ' + last_winner + '\n'
         # print("My bet: ", self.myBet)
         print(Board.history)
         print("My Profit:", Bet.profit)
         # Bet.reset_current_bet()
 
-    # @staticmethod
-    def print_worksheet(self, worksheet):
+    @staticmethod
+    def print_worksheet(worksheet):
         board = Board.history
         bet_place = Bet.placeHistory
         bet_side = Bet.sideHistory

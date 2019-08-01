@@ -10,6 +10,8 @@
     in_game_ti:in_game_ti
     pre_ti:pre_ti
 
+    board:board
+
     GridLayout:
         cols:1
         size: root.width, root.height
@@ -18,7 +20,7 @@
         GridLayout:
             cols:2
             rows:1
-            size_hint_y: 0.5
+            size_hint_y: 0.3
             Button:
                 text:"B"
                 on_press: root.bet_pressed('B')
@@ -64,10 +66,10 @@
                         on_press: root.bet_pressed('L', 5)
 
         GridLayout:
-            cols:2
+            cols:3
 
             GridLayout:
-                size_hint_x: 0.3
+                size_hint_x: 0.5
                 rows: 8
                 Label:
                     id: total_profit
@@ -82,6 +84,7 @@
                 Label:
                     id: current_bet
                     text: "Betting: ?"
+                    font_size:26
                     size_hint_y: 0.2
 
                 Label:
@@ -112,12 +115,23 @@
                     on_press: root.export_to_excel()
 
             GridLayout:
+                size_hint_x: 0.2
+            ScrollView:
+                size_hint_x: 0.7
+                Label:
+                    pos:self.pos
+                    id:board
+                    size_hint:None, None
+                    size: self.texture_size
+                    text: ''
+                    font_size: 30
+
 
 
 
         GridLayout:
             cols:2
-            size_hint_y:0.5
+            size_hint_y:0.4
             Button:
                 text:"Player"
                 background_color:0,0,1,1
@@ -128,10 +142,17 @@
                 background_color:1,0,0,1
                 on_press: root.board_pressed('B')
 
+        GridLayout:
+            cols:3
+            size_hint_y: 0.3
             Button:
                 text:"Bet Player"
                 background_color:0.6,0.6,1,1
                 on_press: root.bet_side('P')
+
+            Button:
+                text:"Cancel Bet"
+                on_press: root.bet_side('')
 
             Button:
                 text:"Bet Banker"
