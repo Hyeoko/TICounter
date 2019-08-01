@@ -14,7 +14,7 @@ from openpyxl import Workbook
 from openpyxl import load_workbook
 from openpyxl.styles import Alignment, PatternFill
 
-filename = "sample.xlsx"
+filename = "Practice.xlsx"
 
 
 class Screen(Widget):
@@ -32,6 +32,20 @@ class Screen(Widget):
     pre_ti = ObjectProperty(None)
 
     board = ObjectProperty(None)
+
+    def reset(self):
+        Bet.reset()
+        Board.reset()
+        self.myBet = ''
+        self.mySide = ''
+        self.total_profit.text = "Total Profit: 0"
+        self.profit.text = "Current Profit: 0"
+        self.current_bet.text = "Betting: ?"
+        self.total_wins.text = "P: 0     B: 0"
+        self.shoe_ti.text = "Shoe TI: 0"
+        self.in_game_ti.text = "In-Game TI: 0"
+        self.pre_ti.text = "Pre-TI: 0"
+        self.board.text = ''
 
     # @staticmethod
     def bet_pressed(self, bet, ind=None):
@@ -54,8 +68,6 @@ class Screen(Widget):
             self.current_bet.text = 'Betting: L' + str(Bet.get_current_bet())
         else:
             pass
-
-        print("Current Bet:", Bet.get_current_bet())
 
     def bet_side(self, side):
         if self.myBet is None:
@@ -80,14 +92,11 @@ class Screen(Widget):
         self.shoe_ti.text = 'Shoe TI: ' + str(Board.calc_shoe_ti())
         self.pre_ti.text = 'Pre-TI: ' + str(Board.calc_pre_ti())
 
+        # Print on Scrollview
         if last_winner == 'P':
             self.board.text += last_winner + '\n'
         elif last_winner == 'B':
             self.board.text += '                ' + last_winner + '\n'
-        # print("My bet: ", self.myBet)
-        print(Board.history)
-        print("My Profit:", Bet.profit)
-        # Bet.reset_current_bet()
 
     @staticmethod
     def print_worksheet(worksheet):
@@ -97,12 +106,12 @@ class Screen(Widget):
         bet_amt = Bet.amtHistory
         bet_profit = Bet.profitHistory
 
-        worksheet["A1"] = "ShoeTI"
-        worksheet["B1"] = "PreTI"
-        worksheet["C1"] = "Board"
-        worksheet["D1"] = "Bet Side"
-        worksheet["E1"] = "Bet Amt"
-        worksheet["F1"] = "Profits"
+        # worksheet["A1"] = "ShoeTI"
+        # worksheet["B1"] = "PreTI"
+        worksheet["A1"] = "Board"
+        worksheet["B1"] = "Bet Side"
+        worksheet["C1"] = "Bet Amt"
+        worksheet["D1"] = "Profits"
 
         banker_fill = PatternFill(start_color='FFFF0000', end_color='FFFF0000', fill_type='solid')
         player_fill = PatternFill(start_color='FF0000FF', end_color='FF0000FF', fill_type='solid')
@@ -111,7 +120,7 @@ class Screen(Widget):
             # worksheet.cell(column=1, row=i + 2, value=self.shoeTi)
             # worksheet.cell(column=2, row=i + 2, value=self.preTi)
 
-            board_cell = worksheet.cell(column=3, row=i + 2, value=board[i])
+            board_cell = worksheet.cell(column=1, row=i + 2, value=board[i])
             if board[i] == 'B':
                 board_cell.alignment = Alignment(horizontal='right')
                 board_cell.fill = banker_fill
@@ -119,12 +128,12 @@ class Screen(Widget):
                 board_cell.fill = player_fill
             if i < len(bet_place):
                 if bet_side[i] == 'B':
-                    worksheet.cell(column=4, row=bet_place[i], value=bet_side[i]).alignment = \
+                    worksheet.cell(column=2, row=bet_place[i], value=bet_side[i]).alignment = \
                         Alignment(horizontal='right')
                 else:
-                    worksheet.cell(column=4, row=bet_place[i], value=bet_side[i])
-                worksheet.cell(column=5, row=bet_place[i], value=bet_amt[i]).alignment = Alignment(horizontal='right')
-                worksheet.cell(column=6, row=bet_place[i], value=bet_profit[i])
+                    worksheet.cell(column=2, row=bet_place[i], value=bet_side[i])
+                worksheet.cell(column=3, row=bet_place[i], value=bet_amt[i]).alignment = Alignment(horizontal='right')
+                worksheet.cell(column=4, row=bet_place[i], value=bet_profit[i])
 
     def export_to_excel(self):
 
@@ -152,36 +161,3 @@ class TICounterApp(App):
 
 if __name__ == "__main__":
     TICounterApp().run()
-#
-# Bet.base_bet()
-#
-# while True:
-#     myBet = ''
-#     if random.random() < 0.5:
-#         myBet = Bet.bet_player()
-#     else:
-#         myBet = Bet.bet_banker()
-#
-#     if random.random() < 0.5:
-#         Board.player_win()
-#         Bet.bet_result(Board.player_win() == myBet)
-#         # if Board.player_win() == myBet:
-#         #     Bet.bet_result(True)
-#         # else:
-#         #     Bet.bet_result(False)
-#     else:
-#         Board.banker_win()
-#         Bet.bet_result(Board.player_win() == myBet)
-#         # if Board.banker_win() == myBet:
-#         #     Bet.bet_result(True)
-#         # else:
-#         #     Bet.bet_result(False)
-#
-#     if len(Board.history) > 50:
-#         break
-#
-# print(Board.history)
-# print("Shoe TI:", Board.calc_shoe_ti())
-# print("Pre-TI:", Board.calc_pre_ti())
-#
-# print("My Profit:", Bet.profit)

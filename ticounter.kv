@@ -16,7 +16,6 @@
         cols:1
         size: root.width, root.height
 
-
         GridLayout:
             cols:2
             rows:1
@@ -67,7 +66,6 @@
 
         GridLayout:
             cols:3
-
             GridLayout:
                 size_hint_x: 0.5
                 rows: 8
@@ -83,6 +81,7 @@
 
                 Label:
                     id: current_bet
+                    halign:'center'
                     text: "Betting: ?"
                     font_size:26
                     size_hint_y: 0.2
@@ -108,11 +107,21 @@
                     text: "Pre-TI: 0"
                     size_hint_y: 0.2
 
-                Button:
-                    text:"Export to Excel"
-                    size_hint_y:0.2
-                    background_color:0, 1, 0, 1
-                    on_press: root.export_to_excel()
+                GridLayout:
+                    cols:2
+                    size_hint_y:0.4
+                    Button:
+                        text:"Export\nto\nExcel"
+                        halign:'center'
+                        size_hint_y:0.2
+                        background_color:0, 1, 0, 1
+                        on_press: root.export_to_excel()
+
+                    Button:
+                        text: "Reset\nShoe"
+                        halign:'center'
+
+                        on_press: root.reset()
 
             GridLayout:
                 size_hint_x: 0.2
@@ -125,9 +134,6 @@
                     size: self.texture_size
                     text: ''
                     font_size: 30
-
-
-
 
         GridLayout:
             cols:2

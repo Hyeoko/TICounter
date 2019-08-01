@@ -12,6 +12,17 @@ class Bet:
     profit = 0
 
     @classmethod
+    def reset(cls):
+        cls.placeHistory = []
+        cls.sideHistory = []
+        cls.amtHistory = []
+        cls.profitHistory = []
+
+        cls.currentBet = 0
+        cls.totalProfit = 0
+        cls.profit = 0
+
+    @classmethod
     def profit_reset(cls):
         cls.profit = 0
 

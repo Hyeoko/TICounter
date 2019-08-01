@@ -9,6 +9,17 @@ class Board:
     preTI = 0
 
     @classmethod
+    def reset(cls):
+        cls.player = 0
+        cls.banker = 0
+        cls.history = []
+
+        cls.ind = 1
+        cls.shoeTI = 0
+        cls.inGameTI = 0
+        cls.preTI = 0
+
+    @classmethod
     def last_winner(cls):
         return cls.history[-1]
 
