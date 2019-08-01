@@ -49,6 +49,8 @@ class Board:
                     cls.preTI += 1
                 else:
                     cls.preTI -= 1
+                if i == 5:
+                    break
                 last = cls.history[-i]
         return cls.preTI
 

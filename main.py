@@ -11,7 +11,7 @@ from kivy.properties import ObjectProperty
 
 from openpyxl import Workbook
 from openpyxl import load_workbook
-from openpyxl.styles import Alignment
+from openpyxl.styles import Alignment, PatternFill
 
 filename = "sample.xlsx"
 
@@ -19,6 +19,10 @@ filename = "sample.xlsx"
 class Screen(Widget):
     myBet = ObjectProperty(None)
     mySide = ObjectProperty(None)
+    #
+    # shoeTi = ObjectProperty(None)
+    # preTi = ObjectProperty(None)
+    # profit = ObjectProperty(None)
 
     # @staticmethod
     def bet_pressed(self, bet, ind=None):
@@ -51,43 +55,63 @@ class Screen(Widget):
         if self.mySide == 'P' or self.mySide == 'B':
             Bet.bet_result(self.mySide == last_winner)
             Bet.profitHistory.append(Bet.profit)
+            # self.profit.text = str(Bet.profit)
             self.mySide = ''
+        # self.shoeTi = Board.calc_shoe_ti()
+        # self.preTi = Board.calc_pre_ti()
         # print("My bet: ", self.myBet)
         print(Board.history)
         print("My Profit:", Bet.profit)
         # Bet.reset_current_bet()
 
-    @staticmethod
-    def print_worksheet(worksheet):
+    # @staticmethod
+    # def show_profit(self):
+    #     profit = ObjectProperty(None)
+    #
+    #     profit.text = str(Bet.profit)
+    #     print(self.self.profit.text)
+
+    # @staticmethod
+    def print_worksheet(self, worksheet):
         board = Board.history
         bet_place = Bet.placeHistory
         bet_side = Bet.sideHistory
         bet_amt = Bet.amtHistory
         bet_profit = Bet.profitHistory
 
-        worksheet["A1"] = "Board"
-        worksheet["B1"] = "Bet Side"
-        worksheet["C1"] = "Bet Amt"
-        worksheet["D1"] = "Profits"
+        worksheet["A1"] = "ShoeTI"
+        worksheet["B1"] = "PreTI"
+        worksheet["C1"] = "Board"
+        worksheet["D1"] = "Bet Side"
+        worksheet["E1"] = "Bet Amt"
+        worksheet["F1"] = "Profits"
+
+        banker_fill = PatternFill(start_color='FFFF0000', end_color='FFFF0000', fill_type='solid')
+        player_fill = PatternFill(start_color='FF0000FF', end_color='FF0000FF', fill_type='solid')
 
         for i in range(len(board)):
+            # worksheet.cell(column=1, row=i + 2, value=self.shoeTi)
+            # worksheet.cell(column=2, row=i + 2, value=self.preTi)
+
+            board_cell = worksheet.cell(column=3, row=i + 2, value=board[i])
             if board[i] == 'B':
-                worksheet.cell(column=1, row=i + 2, value=board[i]).alignment = Alignment(horizontal='right')
+                board_cell.alignment = Alignment(horizontal='right')
+                board_cell.fill = banker_fill
             else:
-                worksheet.cell(column=1, row=i + 2, value=board[i])
+                board_cell.fill = player_fill
             if i < len(bet_place):
                 if bet_side[i] == 'B':
-                    worksheet.cell(column=2, row=bet_place[i], value=bet_side[i]).alignment = \
+                    worksheet.cell(column=4, row=bet_place[i], value=bet_side[i]).alignment = \
                         Alignment(horizontal='right')
                 else:
-                    worksheet.cell(column=2, row=bet_place[i], value=bet_side[i])
-                worksheet.cell(column=3, row=bet_place[i], value=bet_amt[i]).alignment = Alignment(horizontal='right')
-                worksheet.cell(column=4, row=bet_place[i], value=bet_profit[i])
+                    worksheet.cell(column=4, row=bet_place[i], value=bet_side[i])
+                worksheet.cell(column=5, row=bet_place[i], value=bet_amt[i]).alignment = Alignment(horizontal='right')
+                worksheet.cell(column=6, row=bet_place[i], value=bet_profit[i])
 
     def export_to_excel(self):
         try:
             wb = load_workbook(filename=filename)
-            ws = wb.create_sheet("newSheet")
+            ws = wb.create_sheet("Sheet")
             self.print_worksheet(ws)
             wb.save(filename)
         except FileNotFoundError:
