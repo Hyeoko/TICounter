@@ -1,7 +1,19 @@
 <Screen>:
+
+    total_profit:total_profit
+    profit:profit
+    current_bet:current_bet
+
+    total_wins:total_wins
+
+    shoe_ti:shoe_ti
+    in_game_ti:in_game_ti
+    pre_ti:pre_ti
+
     GridLayout:
         cols:1
         size: root.width, root.height
+
 
         GridLayout:
             cols:2
@@ -10,6 +22,7 @@
             Button:
                 text:"B"
                 on_press: root.bet_pressed('B')
+                size_hint: (0.4, 0.5)
 
             GridLayout:
                 cols:1
@@ -52,11 +65,45 @@
 
         GridLayout:
             cols:2
+
             GridLayout:
-                rows:2
+                size_hint_x: 0.3
+                rows: 8
+                Label:
+                    id: total_profit
+                    text: "Total Profit: 0"
+                    size_hint_y: 0.2
+
                 Label:
                     id: profit
-                    text: "0"
+                    text: "Current Profit: 0"
+                    size_hint_y: 0.2
+
+                Label:
+                    id: current_bet
+                    text: "Betting: ?"
+                    size_hint_y: 0.2
+
+                Label:
+                    id: total_wins
+                    text: "P: 0     B: 0"
+                    font_size:20
+                    size_hint_y: 0.35
+
+                Label:
+                    id: shoe_ti
+                    text: "Shoe TI: 0"
+                    size_hint_y: 0.2
+
+                Label:
+                    id: in_game_ti
+                    text: "In-Game TI: 0"
+                    size_hint_y: 0.2
+
+                Label:
+                    id: pre_ti
+                    text: "Pre-TI: 0"
+                    size_hint_y: 0.2
 
                 Button:
                     text:"Export to Excel"

@@ -8,7 +8,17 @@ class Bet:
     profitHistory = []
 
     currentBet = 0
+    totalProfit = 0
     profit = 0
+
+    @classmethod
+    def profit_reset(cls):
+        cls.profit = 0
+
+    @classmethod
+    def total_profit(cls):
+        cls.totalProfit += cls.profitHistory[-1]
+        return cls.totalProfit
 
     @classmethod
     def base_bet(cls):

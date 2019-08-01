@@ -17,24 +17,38 @@ filename = "sample.xlsx"
 
 
 class Screen(Widget):
-    myBet = ObjectProperty(None)
+    myBet = ObjectProperty(None) # This is used for Excel
     mySide = ObjectProperty(None)
-    #
-    # shoeTi = ObjectProperty(None)
-    # preTi = ObjectProperty(None)
-    # profit = ObjectProperty(None)
+
+    total_profit = ObjectProperty(None)
+    profit = ObjectProperty(None)
+    current_bet = ObjectProperty(None)
+
+    total_wins = ObjectProperty(None)
+
+    shoe_ti = ObjectProperty(None)
+    in_game_ti = ObjectProperty(None)
+    pre_ti = ObjectProperty(None)
 
     # @staticmethod
     def bet_pressed(self, bet, ind=None):
         if bet == 'B':
             Bet.base_bet()
+            # This base bet indicates that new game is starting
+            if len(Bet.profitHistory) != 0:
+                Bet.profit_reset()
+                self.total_profit.text = 'Total Profit: ' + str(Bet.total_profit())
+                self.profit.text = 'Current Profit: ' + str(Bet.profit)
             self.myBet = 'B'
+            self.current_bet.text = 'Betting: B'
         elif bet == "F":
             Bet.force_bet(ind)
             self.myBet = 'F' + str(Bet.get_current_bet())
+            self.current_bet.text = 'Betting: F' + str(Bet.get_current_bet())
         elif bet == "L":
             Bet.ladder_bet(ind)
             self.myBet = 'L' + str(Bet.get_current_bet())
+            self.current_bet.text = 'Betting: L' + str(Bet.get_current_bet())
         else:
             pass
 
@@ -55,21 +69,17 @@ class Screen(Widget):
         if self.mySide == 'P' or self.mySide == 'B':
             Bet.bet_result(self.mySide == last_winner)
             Bet.profitHistory.append(Bet.profit)
-            # self.profit.text = str(Bet.profit)
+            self.profit.text = 'Current Profit: ' + str(Bet.profit)
             self.mySide = ''
-        # self.shoeTi = Board.calc_shoe_ti()
-        # self.preTi = Board.calc_pre_ti()
+
+        self.total_wins.text = 'P: ' + str(Board.player) + '     ' + 'B: ' + str(Board.banker)
+
+        self.shoe_ti.text = 'Shoe TI: ' + str(Board.calc_shoe_ti())
+        self.pre_ti.text = 'Pre-TI: ' + str(Board.calc_pre_ti())
         # print("My bet: ", self.myBet)
         print(Board.history)
         print("My Profit:", Bet.profit)
         # Bet.reset_current_bet()
-
-    # @staticmethod
-    # def show_profit(self):
-    #     profit = ObjectProperty(None)
-    #
-    #     profit.text = str(Bet.profit)
-    #     print(self.self.profit.text)
 
     # @staticmethod
     def print_worksheet(self, worksheet):
@@ -109,11 +119,14 @@ class Screen(Widget):
                 worksheet.cell(column=6, row=bet_place[i], value=bet_profit[i])
 
     def export_to_excel(self):
+
+        # When filename already exist
         try:
             wb = load_workbook(filename=filename)
             ws = wb.create_sheet("Sheet")
             self.print_worksheet(ws)
             wb.save(filename)
+        # Create new file
         except FileNotFoundError:
             workbook = Workbook()
             worksheet = workbook.active
@@ -122,8 +135,11 @@ class Screen(Widget):
 
 
 class TICounterApp(App):
+    title = "TICounter"
+
     def build(self):
-        return Screen()
+        self.root = Screen()
+        return self.root
 
 
 if __name__ == "__main__":

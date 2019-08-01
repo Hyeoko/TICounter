@@ -3,6 +3,7 @@ class Board:
     banker = 0
     history = []
 
+    ind = 1
     shoeTI = 0
     inGameTI = 0
     preTI = 0
@@ -30,29 +31,30 @@ class Board:
     # Calculate shoe TI
     @classmethod
     def calc_shoe_ti(cls):
-        count = 1
-        while len(cls.history) != 0 and count < len(cls.history):
-            if cls.history[count - 1] != cls.history[count]:
+        if len(cls.history) > 1:
+            if cls.history[cls.ind] != cls.history[cls.ind - 1]:
                 cls.shoeTI += 1
-            else:
+                cls.ind += 1
+            elif cls.history[cls.ind] == cls.history[cls.ind - 1]:
                 cls.shoeTI -= 1
-            count += 1
+                cls.ind += 1
         return cls.shoeTI
 
     # Calculate Pre-TI
     @classmethod
     def calc_pre_ti(cls):
+        pre_ti = 0
         if len(cls.history) > 5:
             last = cls.history[-1]
             for i in range(2, 6):
                 if last != cls.history[-i]:
-                    cls.preTI += 1
+                    pre_ti += 1
                 else:
-                    cls.preTI -= 1
+                    pre_ti -= 1
                 if i == 5:
                     break
                 last = cls.history[-i]
-        return cls.preTI
+        return pre_ti
 
     # This is for stats page
     @classmethod
