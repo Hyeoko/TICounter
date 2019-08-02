@@ -68,26 +68,34 @@ class Screen(Widget):
             self.current_bet.text = 'L' + str(Bet.get_current_bet()) + ' betting'
         else:
             pass
+        print("Current Bet: ", Bet.currentBet)
 
     def bet_side(self, side):
         if self.myBet is None:
             print("You must pick your bet amount!")
+        elif side == 'c':
+            self.mySide = ''
+            self.current_bet.text = self.myBet + ' betting '
+            Bet.mistake()
         else:
             self.mySide = Bet.bet_side(side)
             self.current_bet.text += ' ' + side
-            Bet.placeHistory.append(len(Board.history) + 2)
-            Bet.sideHistory.append(self.mySide)
-            Bet.amtHistory.append(self.myBet)
 
     # @staticmethod
     def board_pressed(self, winner):
         last_winner = Board.winner(winner)
+
+        # If bet was placed
         if self.mySide == 'P' or self.mySide == 'B':
             Bet.bet_result(self.mySide == last_winner)
+            Bet.placeHistory.append(len(Board.history) + 2)
+            Bet.sideHistory.append(self.mySide)
+            Bet.amtHistory.append(self.myBet)
             Bet.profitHistory.append(Bet.profit)
             self.profit.text = 'Current Profit: ' + str(Bet.profit)
             self.mySide = ''
 
+        # Stats on the sidebar
         self.total_wins.text = 'P: ' + str(Board.player) + '     ' + 'B: ' + str(Board.banker)
 
         self.shoe_ti.text = 'Shoe TI: ' + str(Board.calc_shoe_ti())
@@ -99,18 +107,50 @@ class Screen(Widget):
         elif last_winner == 'B':
             self.board.text += '\n                ' + last_winner
 
+        print('Place History: ')
+        print(Bet.placeHistory)
+        print('Side History: ')
+        print(Bet.sideHistory)
+        print('Amount History: ')
+        print(Bet.amtHistory)
+        print('Profit History:')
+        print(Bet.profitHistory)
+        print("Current Bet:", Bet.currentBet)
+        print('-'*20)
+
     def mistake(self):
         # Deletes last winner from ScrollView
         self.board.text = self.board.text.rstrip('BP')
         self.board.text = self.board.text.rstrip()
 
-        # Undo last betting and profit make/lost from it
-        if len(Bet.placeHistory) != 0 and Bet.placeHistory[-1] == len(Board.history) + 1:
-            self.mySide = Bet.sideHistory[-1]
-            Bet.mistake()
-            self.profit.text = 'Current Profit: ' + str(Bet.profit)
+        last_bet = Bet.sideHistory[-1]
+
         Board.mistake()
 
+        # Undo last betting and profit make/lost from it
+        if len(Bet.placeHistory) != 0 and Bet.placeHistory[-1] == len(Board.history) + 3:
+            self.mySide = last_bet
+            if Bet.profitHistory[-1] > Bet.profitHistory[-2]:
+                Bet.undo_won_profit()
+            elif Bet.profitHistory[-1] < Bet.profitHistory[-2]:
+                Bet.undo_lost_profit()
+            Bet.mistake()
+            self.profit.text = 'Current Profit: ' + str(Bet.profit)
+
+            print('Place History: ')
+            print(Bet.placeHistory)
+            print('Side History: ')
+            print(Bet.sideHistory)
+            print('Amount History: ')
+            print(Bet.amtHistory)
+            print('Profit History:')
+            print(Bet.profitHistory)
+            print("Current Bet:", Bet.currentBet)
+            print('-' * 20)
+
+            # Bet.placeHistory.append(len(Board.history) + 2)
+            # Bet.sideHistory.append(self.mySide)
+            # Bet.amtHistory.append(self.myBet)
 
 
     @staticmethod

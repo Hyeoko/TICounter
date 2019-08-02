@@ -27,7 +27,15 @@ class Bet:
         del cls.placeHistory[-1]
         del cls.sideHistory[-1]
         del cls.amtHistory[-1]
-        cls.profitHistory[-1]
+        del cls.profitHistory[-1]
+        # del cls.profitHistory[-1]
+
+    @classmethod
+    def undo_lost_profit(cls):
+        cls.profit += cls.currentBet
+
+    @classmethod
+    def undo_won_profit(cls):
         cls.profit -= cls.currentBet
 
     @classmethod

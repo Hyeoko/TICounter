@@ -136,32 +136,36 @@
                     text: ''
                     font_size: 30
 
-        GridLayout:
-            cols:2
-            size_hint_y:0.4
-            Button:
-                text:"Player"
-                background_color:0,0,1,1
-                on_press: root.board_pressed('P')
-
-            Button:
-                text:"Banker"
-                background_color:1,0,0,1
-                on_press: root.board_pressed('B')
 
         GridLayout:
-            cols:3
-            size_hint_y: 0.3
-            Button:
-                text:"Bet Player"
-                background_color:0.6,0.6,1,1
-                on_press: root.bet_side('P')
+            rows:2
+            size_hint_y:0.45
+            GridLayout:
+                cols:2
+                size_hint_y:0.4
+                Button:
+                    text:"Player"
+                    background_color:0,0,1,1
+                    on_press: root.board_pressed('P')
 
-            Button:
-                text:"Cancel Bet"
-                on_press: root.bet_side('')
+                Button:
+                    text:"Banker"
+                    background_color:1,0,0,1
+                    on_press: root.board_pressed('B')
 
-            Button:
-                text:"Bet Banker"
-                background_color:1,0.6,0.6,1
-                on_press: root.bet_side('B')
+            GridLayout:
+                cols:3
+                size_hint_y: 0.3
+                Button:
+                    text:"Bet Player"
+                    background_color:0.6,0.6,1,1
+                    on_press: root.bet_side('P')
+
+                Button:
+                    text:"Cancel Bet"
+                    on_press: root.bet_side('c')
+
+                Button:
+                    text:"Bet Banker"
+                    background_color:1,0.6,0.6,1
+                    on_press: root.bet_side('B')
