@@ -88,7 +88,7 @@ class Screen(Widget):
         # If bet was placed
         if self.mySide == 'P' or self.mySide == 'B':
             Bet.bet_result(self.mySide == last_winner)
-            Bet.placeHistory.append(len(Board.history) + 2)
+            Bet.placeHistory.append(len(Board.history) + 1)
             Bet.sideHistory.append(self.mySide)
             Bet.amtHistory.append(self.myBet)
             Bet.profitHistory.append(Bet.profit)
@@ -106,17 +106,6 @@ class Screen(Widget):
             self.board.text += '\n   ' + last_winner
         elif last_winner == 'B':
             self.board.text += '\n                ' + last_winner
-
-        print('Place History: ')
-        print(Bet.placeHistory)
-        print('Side History: ')
-        print(Bet.sideHistory)
-        print('Amount History: ')
-        print(Bet.amtHistory)
-        print('Profit History:')
-        print(Bet.profitHistory)
-        print("Current Bet:", Bet.currentBet)
-        print('-'*20)
 
     def mistake(self):
         # Deletes last winner from ScrollView
@@ -137,22 +126,6 @@ class Screen(Widget):
             Bet.mistake()
             self.profit.text = 'Current Profit: ' + str(Bet.profit)
 
-            print('Place History: ')
-            print(Bet.placeHistory)
-            print('Side History: ')
-            print(Bet.sideHistory)
-            print('Amount History: ')
-            print(Bet.amtHistory)
-            print('Profit History:')
-            print(Bet.profitHistory)
-            print("Current Bet:", Bet.currentBet)
-            print('-' * 20)
-
-            # Bet.placeHistory.append(len(Board.history) + 2)
-            # Bet.sideHistory.append(self.mySide)
-            # Bet.amtHistory.append(self.myBet)
-
-
     @staticmethod
     def print_worksheet(worksheet):
         board = Board.history
@@ -170,6 +143,7 @@ class Screen(Widget):
 
         banker_fill = PatternFill(start_color='FFFF0000', end_color='FFFF0000', fill_type='solid')
         player_fill = PatternFill(start_color='FF0000FF', end_color='FF0000FF', fill_type='solid')
+        game_start = PatternFill(start_color='FFFFFF00', end_color='FFFFFF00', fill_type='solid')
 
         for i in range(len(board)):
             # worksheet.cell(column=1, row=i + 2, value=self.shoeTi)
@@ -187,8 +161,23 @@ class Screen(Widget):
                         Alignment(horizontal='right')
                 else:
                     worksheet.cell(column=2, row=bet_place[i], value=bet_side[i])
-                worksheet.cell(column=3, row=bet_place[i], value=bet_amt[i]).alignment = Alignment(horizontal='right')
-                worksheet.cell(column=4, row=bet_place[i], value=bet_profit[i])
+
+                bet_cell = worksheet.cell(column=3, row=bet_place[i], value=bet_amt[i])
+                profit_cell = worksheet.cell(column=4, row=bet_place[i], value=bet_profit[i])
+                bet_cell.alignment = Alignment(horizontal='right')
+                if bet_amt[i] == 'B':
+                    bet_cell.fill = game_start
+                    profit_cell.fill = game_start
+
+        total_color = PatternFill(start_color='FF00FF00', end_color='FF00FF00', fill_type='solid')
+
+        total_row = len(board) + 2
+        total_cell = worksheet.cell(column=3, row=total_row, value='Total:')
+        total_amt = worksheet.cell(column=4, row=total_row, value=Bet.totalProfit)
+        total_cell.alignment = Alignment(horizontal='left')
+
+        total_cell.fill = total_color
+        total_amt.fill = total_color
 
     def export_to_excel(self):
 

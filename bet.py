@@ -2,6 +2,8 @@ class Bet:
     base = 1
     theForce = [2, 3, 5, 8]
     theLadder = [2, 1, 2, 3, 4, 5]
+
+    # These lists are used when recording to excel
     placeHistory = []
     sideHistory = []
     amtHistory = []
@@ -42,6 +44,7 @@ class Bet:
     def profit_reset(cls):
         cls.profit = 0
 
+    # Used for display to sidebar only
     @classmethod
     def total_profit(cls):
         cls.totalProfit += cls.profitHistory[-1]
