@@ -47,7 +47,7 @@ class Bet:
     # Used for display to sidebar only
     @classmethod
     def total_profit(cls):
-        cls.totalProfit += cls.profitHistory[-1]
+        cls.totalProfit += cls.profit
         return cls.totalProfit
 
     @classmethod

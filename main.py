@@ -53,11 +53,11 @@ class Screen(Widget):
             Bet.base_bet()
             # This base bet indicates that new game is starting
             if len(Bet.profitHistory) != 0:
-                Bet.profit_reset()
                 self.total_profit.text = 'Total Profit: ' + str(Bet.total_profit())
+                Bet.profit_reset()
                 self.profit.text = 'Current Profit: ' + str(Bet.profit)
             self.myBet = 'B'
-            self.current_bet.text = 'B betting'
+            self.current_bet.text = 'B betting '
         elif bet == "F":
             Bet.force_bet(ind)
             self.myBet = 'F' + str(Bet.get_current_bet())
