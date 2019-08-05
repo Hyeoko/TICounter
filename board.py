@@ -2,6 +2,7 @@ class Board:
     player = 0
     banker = 0
     history = []
+    tiHistory = []
 
     # ind = 1
     # shoeTI = 0
@@ -37,22 +38,20 @@ class Board:
         if winner == 'P':
             cls.player += 1
             cls.history.append('P')
-            # Scroll to new line
-            # Show player win circle
+            cls.tiHistory.append(cls.calc_shoe_ti())
             return 'P'
         elif winner == 'B':
             cls.banker += 1
             cls.history.append('B')
-            # Scroll to new line
-            # Show banker win circle
+            cls.tiHistory.append(cls.calc_shoe_ti())
             return 'B'
-        pass
+
 
     # Calculate shoe TI
     @classmethod
     def calc_shoe_ti(cls):
         shoe_ti = 0
-        if len(cls.history) > 1:
+        if len(cls.history) > 0:
             for i in range(1, len(cls.history)):
                 if cls.history[i] != cls.history[i - 1]:
                     shoe_ti += 1

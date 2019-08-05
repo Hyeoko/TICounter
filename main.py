@@ -132,51 +132,68 @@ class Screen(Widget):
     @staticmethod
     def print_worksheet(worksheet):
         board = Board.history
+        ti = Board.tiHistory
         bet_place = Bet.placeHistory
         bet_side = Bet.sideHistory
         bet_amt = Bet.amtHistory
         bet_profit = Bet.profitHistory
 
-        # worksheet["A1"] = "ShoeTI"
-        # worksheet["B1"] = "PreTI"
-        worksheet["A1"] = "Board"
-        worksheet["B1"] = "Bet Side"
-        worksheet["C1"] = "Bet Amt"
-        worksheet["D1"] = "Profits"
+        worksheet["A1"] = "TI Count"
+        worksheet["C1"] = "Player"
+        worksheet["D1"] = "Banker"
+        worksheet["E1"] = "Board"
+        worksheet["F1"] = "Checks"
+        worksheet["G1"] = "Profits"
 
         banker_fill = PatternFill(start_color='FFFF0000', end_color='FFFF0000', fill_type='solid')
         player_fill = PatternFill(start_color='FF0000FF', end_color='FF0000FF', fill_type='solid')
-        game_start = PatternFill(start_color='FFFFFF00', end_color='FFFFFF00', fill_type='solid')
+        game_end = PatternFill(start_color='FFFFFF00', end_color='FFFFFF00', fill_type='solid')
+
+        worksheet["C1"].fill = player_fill
+        worksheet["D1"].fill = banker_fill
 
         for i in range(len(board)):
-            # worksheet.cell(column=1, row=i + 2, value=self.shoeTi)
-            # worksheet.cell(column=2, row=i + 2, value=self.preTi)
+            # Shoe TI counts
+            worksheet.cell(column=1, row=i + 2, value=ti[i])
 
-            board_cell = worksheet.cell(column=1, row=i + 2, value=board[i])
+            # Record betting side and amounts
+            if i < len(bet_place):
+                profit_cell = worksheet.cell(column=7, row=bet_place[i], value=bet_profit[i])
+                if bet_side[i] == 'P':
+                    bet_cell = worksheet.cell(column=3, row=bet_place[i], value=bet_amt[i])
+
+                    # colors end of game
+                    if (i + 1 < len(bet_place) and bet_amt[i + 1] == 'B') or i + 1 == len(bet_place):
+                        bet_cell.fill = game_end
+                        profit_cell.fill = game_end
+                elif bet_side[i] == 'B':
+                    bet_cell = worksheet.cell(column=4, row=bet_place[i], value=bet_amt[i])
+
+                    # colors end of game
+                    if (i + 1 < len(bet_place) and bet_amt[i + 1] == 'B') or i + 1 == len(bet_place):
+                        bet_cell.fill = game_end
+                        profit_cell.fill = game_end
+
+                # Marks wins and losses
+                if bet_place[i] == len(board[:i + 1]) + 1 and bet_side[i] == board[i]:
+                    worksheet.cell(column=6, row=bet_place[i], value='~')
+                elif bet_place[i] == len(board[:i + 1]) + 1 and bet_side[i] != board[i]:
+                    worksheet.cell(column=6, row=bet_place[i], value='X')
+
+            # Marks results
+            board_cell = worksheet.cell(column=5, row=i + 2, value=board[i])
             if board[i] == 'B':
                 board_cell.alignment = Alignment(horizontal='right')
                 board_cell.fill = banker_fill
             else:
                 board_cell.fill = player_fill
-            if i < len(bet_place):
-                if bet_side[i] == 'B':
-                    worksheet.cell(column=2, row=bet_place[i], value=bet_side[i]).alignment = \
-                        Alignment(horizontal='right')
-                else:
-                    worksheet.cell(column=2, row=bet_place[i], value=bet_side[i])
-
-                bet_cell = worksheet.cell(column=3, row=bet_place[i], value=bet_amt[i])
-                profit_cell = worksheet.cell(column=4, row=bet_place[i], value=bet_profit[i])
-                bet_cell.alignment = Alignment(horizontal='right')
-                if bet_amt[i] == 'B':
-                    bet_cell.fill = game_start
-                    profit_cell.fill = game_start
 
         total_color = PatternFill(start_color='FF00FF00', end_color='FF00FF00', fill_type='solid')
 
+        # Marks total profits
         total_row = len(board) + 2
-        total_cell = worksheet.cell(column=3, row=total_row, value='Total:')
-        total_amt = worksheet.cell(column=4, row=total_row, value=Bet.totalProfit)
+        total_cell = worksheet.cell(column=6, row=total_row, value='Total:')
+        total_amt = worksheet.cell(column=7, row=total_row, value=Bet.totalProfit)
         total_cell.alignment = Alignment(horizontal='left')
 
         total_cell.fill = total_color
