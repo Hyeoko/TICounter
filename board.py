@@ -28,6 +28,7 @@ class Board:
         elif cancel == 'B':
             cls.banker -= 1
         del cls.history[-1]
+        del cls.tiHistory[-1]
 
     @classmethod
     def last_winner(cls):
