@@ -34,11 +34,17 @@ class Bet:
 
     @classmethod
     def undo_lost_profit(cls):
-        cls.profit += cls.currentBet
+        if len(cls.profitHistory) > 1:
+            cls.profit -= cls.profitHistory[-1] - cls.profitHistory[-2]
+        else:
+            cls.profit -= cls.profitHistory[-1]
 
     @classmethod
     def undo_won_profit(cls):
-        cls.profit -= cls.currentBet
+        if len(cls.profitHistory) > 1:
+            cls.profit -= cls.profitHistory[-1] - cls.profitHistory[-2]
+        else:
+            cls.profit -= cls.profitHistory[-1]
 
     @classmethod
     def profit_reset(cls):

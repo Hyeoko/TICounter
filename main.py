@@ -40,7 +40,7 @@ class Screen(Widget):
         self.mySide = ''
         self.total_profit.text = "Total Profit: 0"
         self.profit.text = "Current Profit: 0"
-        self.current_bet.text = "Betting: ?"
+        self.current_bet.text = "? bet on ?"
         self.total_wins.text = "P: 0     B: 0"
         self.shoe_ti.text = "Shoe TI: 0"
         self.in_game_ti.text = "In-Game TI: 0"
@@ -57,15 +57,15 @@ class Screen(Widget):
                 Bet.profit_reset()
                 self.profit.text = 'Current Profit: ' + str(Bet.profit)
             self.myBet = 'B'
-            self.current_bet.text = 'B betting '
+            self.current_bet.text = 'B bet on ?'
         elif bet == "F":
             Bet.force_bet(ind)
             self.myBet = 'F' + str(Bet.get_current_bet())
-            self.current_bet.text = 'F' + str(Bet.get_current_bet()) + ' betting'
+            self.current_bet.text = 'F' + str(Bet.get_current_bet()) + ' bet on ?'
         elif bet == "L":
             Bet.ladder_bet(ind)
             self.myBet = 'L' + str(Bet.get_current_bet())
-            self.current_bet.text = 'L' + str(Bet.get_current_bet()) + ' betting'
+            self.current_bet.text = 'L' + str(Bet.get_current_bet()) + ' bet on ?'
         else:
             pass
 
@@ -74,10 +74,10 @@ class Screen(Widget):
             print("You must pick your bet amount!")
         elif side == 'c':
             self.mySide = ''
-            self.current_bet.text = self.myBet + ' betting ?'
+            self.current_bet.text = self.myBet + ' bet on ?'
         else:
             self.mySide = Bet.bet_side(side)
-            self.current_bet.text = self.myBet + ' betting ' + side
+            self.current_bet.text = self.myBet + ' bet on ' + side
 
     # @staticmethod
     def board_pressed(self, winner):
@@ -111,21 +111,24 @@ class Screen(Widget):
         self.board.text = self.board.text.rstrip()
 
         if len(Board.history) != 0:
-            Board.mistake()
 
             # Undo last betting and profit make/lost from it
-            if len(Bet.placeHistory) != 0 and Bet.placeHistory[-1] == len(Board.history) + 2:
-                last_bet = Bet.sideHistory[-1]
-                self.mySide = last_bet
+            if len(Bet.placeHistory) != 0 and Bet.placeHistory[-1] == len(Board.history) + 1:
+                # last_bet = Bet.sideHistory[-1]
+                # self.mySide = last_bet
                 if len(Bet.placeHistory) > 1:
                     if Bet.profitHistory[-1] > Bet.profitHistory[-2]:
                         Bet.undo_won_profit()
                     elif Bet.profitHistory[-1] < Bet.profitHistory[-2]:
                         Bet.undo_lost_profit()
+                elif len(Bet.placeHistory) == 1:
+                    Bet.profit = 0
                 else:
                     print("Please reset shoe and start again")
                 Bet.mistake()
+                self.current_bet.text = self.myBet + ' bet on ?'
                 self.profit.text = 'Current Profit: ' + str(Bet.profit)
+            Board.mistake()
         else:
             print('Board is empty!')
 
