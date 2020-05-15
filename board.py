@@ -3,23 +3,18 @@ class Board:
     banker = 0
     history = []
     tiHistory = []
+    shoe_ti = 0
 
-    # ind = 1
-    # shoeTI = 0
-    # inGameTI = 0
-    # preTI = 0
-
+    # Resets the board for new game(shoe)
     @classmethod
     def reset(cls):
         cls.player = 0
         cls.banker = 0
         cls.history = []
+        cls.tiHistory = []
+        cls.shoe_ti = 0
 
-        # cls.ind = 1
-        # cls.shoeTI = 0
-        cls.inGameTI = 0
-        # cls.preTI = 0
-
+    # Deletes last history
     @classmethod
     def mistake(cls):
         cancel = cls.history[-1]
@@ -29,11 +24,18 @@ class Board:
             cls.banker -= 1
         del cls.history[-1]
         del cls.tiHistory[-1]
+        if len(cls.history) > 0:
+            if cancel == cls.history[-1]:
+                cls.shoe_ti += 1
+            else:
+                cls.shoe_ti -= 1
 
+    # Gets the last winner
     @classmethod
     def last_winner(cls):
         return cls.history[-1]
 
+    # Records to board the winner of the round
     @classmethod
     def winner(cls, winner):
         if winner == 'P':
@@ -47,24 +49,21 @@ class Board:
             cls.tiHistory.append(cls.calc_shoe_ti())
             return 'B'
 
-
-    # Calculate shoe TI
+    # Update the shoe TI and return it
     @classmethod
     def calc_shoe_ti(cls):
-        shoe_ti = 0
-        if len(cls.history) > 0:
-            for i in range(1, len(cls.history)):
-                if cls.history[i] != cls.history[i - 1]:
-                    shoe_ti += 1
-                elif cls.history[i] == cls.history[i - 1]:
-                    shoe_ti -= 1
-        return shoe_ti
+        if len(cls.history) > 1:
+            if cls.history[-2] == cls.history[-1]:
+                cls.shoe_ti -= 1
+            else:
+                cls.shoe_ti += 1
+        return cls.shoe_ti
 
     # Calculate Pre-TI
     @classmethod
     def calc_pre_ti(cls):
         pre_ti = 0
-        if len(cls.history) > 5:
+        if len(cls.history) > 4:
             last = cls.history[-1]
             for i in range(2, 6):
                 if last != cls.history[-i]:
@@ -74,6 +73,8 @@ class Board:
                 if i == 5:
                     break
                 last = cls.history[-i]
+        else:
+            return 'None'
         return pre_ti
 
     # This is for stats page

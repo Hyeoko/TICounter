@@ -1,20 +1,27 @@
 from board import Board
 from bet import Bet
 
-import kivy
+# import kivy
 from kivy.app import App
-from kivy.uix.label import Label
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.scrollview import ScrollView
-from kivy.uix.button import Button
+# from kivy.uix.label import Label
+# from kivy.uix.gridlayout import GridLayout
+# from kivy.uix.scrollview import ScrollView
+# from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty
 
 from openpyxl import Workbook
 from openpyxl import load_workbook
-from openpyxl.styles import Alignment, PatternFill
+from openpyxl.styles import Alignment, PatternFill, Color, Font
 
 filename = "Practice.xlsx"
+
+# Shits to add and fix
+
+# Add running totals to print in excel sheet
+# Change bet selected in the app to the last bet selection after deleting mistake
+# Figure out how to track +6 profits for new games
+# Figure out how to record tendencies in excel and in app
 
 
 class Screen(Widget):
@@ -27,8 +34,8 @@ class Screen(Widget):
 
     total_wins = ObjectProperty(None)
 
+    total_bets = ObjectProperty(None)
     shoe_ti = ObjectProperty(None)
-    in_game_ti = ObjectProperty(None)
     pre_ti = ObjectProperty(None)
 
     board = ObjectProperty(None)
@@ -42,12 +49,11 @@ class Screen(Widget):
         self.profit.text = "Current Profit: 0"
         self.current_bet.text = "? bet on ?"
         self.total_wins.text = "P: 0     B: 0"
+        self.total_bets.text = "# of bets: 0"
         self.shoe_ti.text = "Shoe TI: 0"
-        self.in_game_ti.text = "In-Game TI: 0"
-        self.pre_ti.text = "Pre-TI: 0"
+        self.pre_ti.text = "Pre-TI: None"
         self.board.text = ''
 
-    # @staticmethod
     def bet_pressed(self, bet, ind=None):
         if bet == 'B':
             Bet.base_bet()
@@ -79,38 +85,58 @@ class Screen(Widget):
             self.mySide = Bet.bet_side(side)
             self.current_bet.text = self.myBet + ' bet on ' + side
 
-    # @staticmethod
     def board_pressed(self, winner):
         last_winner = Board.winner(winner)
+        checkmark = ''
+        amount = ''
 
         # If bet was placed
         if self.mySide == 'P' or self.mySide == 'B':
-            Bet.bet_result(self.mySide == last_winner)
+            if Bet.bet_result(self.mySide == last_winner):
+                checkmark = '+'
+            else:
+                checkmark = 'x'
             Bet.placeHistory.append(len(Board.history) + 1)
             Bet.sideHistory.append(self.mySide)
             Bet.amtHistory.append(self.myBet)
             Bet.profitHistory.append(Bet.profit)
+            amount = Bet.amtHistory[-1]
+            if amount == 'B':
+                amount.lower()
             self.profit.text = 'Current Profit: ' + str(Bet.profit)
+            self.total_bets.text = '# of bets: ' + str(len(Bet.sideHistory))
             self.mySide = ''
 
         # Stats on the sidebar
         self.total_wins.text = 'P: ' + str(Board.player) + '     ' + 'B: ' + str(Board.banker)
 
-        self.shoe_ti.text = 'Shoe TI: ' + str(Board.calc_shoe_ti())
+        self.shoe_ti.text = 'Shoe TI: ' + str(Board.shoe_ti)
         self.pre_ti.text = 'Pre-TI: ' + str(Board.calc_pre_ti())
 
         # Print on ScrollView
         if last_winner == 'P':
-            self.board.text += '\n   ' + last_winner
+            # To handle the format of the board
+            # Length of these lines must be 17 for the purpose of the mistake() function
+            if len(amount) > 1:
+                self.board.text += '\n ' + last_winner + '   ' + amount + ' ' * 7 + checkmark + ' '
+            elif len(amount) > 0:
+                self.board.text += '\n ' + last_winner + '   ' + amount + ' ' * 9 + checkmark
+            else:
+                self.board.text += '\n ' + last_winner + '   ' + amount + ' ' * 11  # 17
         elif last_winner == 'B':
-            self.board.text += '\n                ' + last_winner
+            if len(amount) > 1:     # 8           2            num     1           1        1       1
+                self.board.text += '\n       ' + amount + ' ' * 3 + last_winner + ' ' + checkmark + ' '
+            elif len(amount) > 0:               # 1
+                self.board.text += '\n       ' + amount + ' ' * 5 + last_winner + ' ' + checkmark
+            else:                               # 0
+                self.board.text += '\n       ' + amount + ' ' * 8 + last_winner  # 17
 
     def mistake(self):
-        # Deletes last winner from ScrollView
-        self.board.text = self.board.text.rstrip('BP')
-        self.board.text = self.board.text.rstrip()
-
+        # The board cannot be empty
         if len(Board.history) != 0:
+
+            # Deletes last winner from ScrollView
+            self.board.text = self.board.text[:-17]
 
             # Undo last betting and profit make/lost from it
             if len(Bet.placeHistory) != 0 and Bet.placeHistory[-1] == len(Board.history) + 1:
@@ -128,7 +154,13 @@ class Screen(Widget):
                 Bet.mistake()
                 self.current_bet.text = self.myBet + ' bet on ?'
                 self.profit.text = 'Current Profit: ' + str(Bet.profit)
+                self.total_bets.text = '# of bets: ' + str(len(Bet.sideHistory))
+
             Board.mistake()
+            # Stats on the sidebar
+            self.total_wins.text = 'P: ' + str(Board.player) + '     ' + 'B: ' + str(Board.banker)
+            self.shoe_ti.text = 'Shoe TI: ' + str(Board.shoe_ti)
+            self.pre_ti.text = 'Pre-TI: ' + str(Board.calc_pre_ti())
         else:
             print('Board is empty!')
 
@@ -151,6 +183,7 @@ class Screen(Widget):
         banker_fill = PatternFill(start_color='FFFF0000', end_color='FFFF0000', fill_type='solid')
         player_fill = PatternFill(start_color='FF0000FF', end_color='FF0000FF', fill_type='solid')
         game_end = PatternFill(start_color='FFFFFF00', end_color='FFFFFF00', fill_type='solid')
+        player_font = Font(color='FFFFFFFF')
 
         worksheet["C1"].fill = player_fill
         worksheet["D1"].fill = banker_fill
@@ -178,10 +211,12 @@ class Screen(Widget):
                         profit_cell.fill = game_end
 
                 # Marks wins and losses
-                if bet_place[i] == len(board[:i + 1]) + 1 and bet_side[i] == board[i]:
-                    worksheet.cell(column=6, row=bet_place[i], value='~')
-                elif bet_place[i] == len(board[:i + 1]) + 1 and bet_side[i] != board[i]:
-                    worksheet.cell(column=6, row=bet_place[i], value='X')
+                checks = worksheet.cell(column=6, row=bet_place[i])
+                checks.alignment = Alignment(horizontal='right')
+                if bet_side[i] == board[bet_place[i] - 2]:
+                    checks.value = '✓'
+                elif bet_side[i] != board[bet_place[i] - 2]:
+                    checks.value = 'x'
 
             # Marks results
             board_cell = worksheet.cell(column=5, row=i + 2, value=board[i])
@@ -190,6 +225,7 @@ class Screen(Widget):
                 board_cell.fill = banker_fill
             else:
                 board_cell.fill = player_fill
+                board_cell.font = player_font
 
         total_color = PatternFill(start_color='FF00FF00', end_color='FF00FF00', fill_type='solid')
 
@@ -216,6 +252,8 @@ class Screen(Widget):
             worksheet = workbook.active
             self.print_worksheet(worksheet)
             workbook.save(filename)
+        except PermissionError:
+            print("Close the excel file first!")
 
 
 class TICounterApp(App):
