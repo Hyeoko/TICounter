@@ -118,18 +118,34 @@ class Screen(Widget):
             # To handle the format of the board
             # Length of these lines must be 17 for the purpose of the mistake() function
             if len(amount) > 1:
-                self.board.text += '\n ' + last_winner + '   ' + amount + ' ' * 7 + checkmark + ' '
+                self.board.text += '\n ' + amount + ' ' * 3 + last_winner + ' ' * 7 + checkmark + ' '
             elif len(amount) > 0:
-                self.board.text += '\n ' + last_winner + '   ' + amount + ' ' * 9 + checkmark
+                self.board.text += '\n ' + amount + ' ' * 5 + last_winner + ' ' * 7 + checkmark
             else:
-                self.board.text += '\n ' + last_winner + '   ' + amount + ' ' * 11  # 17
+                self.board.text += '\n ' + amount + ' ' * 8 + last_winner + ' ' * 6  # 17
         elif last_winner == 'B':
             if len(amount) > 1:     # 8           2            num     1           1        1       1
-                self.board.text += '\n       ' + amount + ' ' * 3 + last_winner + ' ' + checkmark + ' '
+                self.board.text += '\n ' + amount + ' ' * 9 + last_winner + ' ' + checkmark + ' '
             elif len(amount) > 0:               # 1
-                self.board.text += '\n       ' + amount + ' ' * 5 + last_winner + ' ' + checkmark
+                self.board.text += '\n ' + amount + ' ' * 11 + last_winner + ' ' + checkmark
             else:                               # 0
-                self.board.text += '\n       ' + amount + ' ' * 8 + last_winner  # 17
+                self.board.text += '\n ' + amount + ' ' * 14 + last_winner  # 17
+        # if last_winner == 'P':
+        #     # To handle the format of the board
+        #     # Length of these lines must be 17 for the purpose of the mistake() function
+        #     if len(amount) > 1:
+        #         self.board.text += '\n ' + last_winner + '   ' + amount + ' ' * 7 + checkmark + ' '
+        #     elif len(amount) > 0:
+        #         self.board.text += '\n ' + last_winner + '   ' + amount + ' ' * 9 + checkmark
+        #     else:
+        #         self.board.text += '\n ' + last_winner + '   ' + amount + ' ' * 11  # 17
+        # elif last_winner == 'B':
+        #     if len(amount) > 1:     # 8           2            num     1           1        1       1
+        #         self.board.text += '\n       ' + amount + ' ' * 3 + last_winner + ' ' + checkmark + ' '
+        #     elif len(amount) > 0:               # 1
+        #         self.board.text += '\n       ' + amount + ' ' * 5 + last_winner + ' ' + checkmark
+        #     else:                               # 0
+        #         self.board.text += '\n       ' + amount + ' ' * 8 + last_winner  # 17
 
     def mistake(self):
         # The board cannot be empty
