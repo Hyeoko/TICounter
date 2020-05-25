@@ -9,6 +9,7 @@ from kivy.app import App
 # from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty
+from kivy.uix.popup import Popup
 
 from openpyxl import Workbook
 from openpyxl import load_workbook
@@ -19,8 +20,6 @@ filename = "Practice.xlsx"
 # Shits to add and fix
 
 # Add running totals to print in excel sheet
-# Change bet selected in the app to the last bet selection after deleting mistake
-# Figure out how to track +6 profits for new games
 # Figure out how to record tendencies in excel and in app
 
 
@@ -28,8 +27,9 @@ class Screen(Widget):
     myBet = ObjectProperty(None) # This is used for Excel
     mySide = ObjectProperty(None)
 
-    total_profit = ObjectProperty(None)
-    profit = ObjectProperty(None)
+    # total_profit = ObjectProperty(None)
+    micro_game_profit = ObjectProperty(None)
+    money_count = ObjectProperty(None)
     current_bet = ObjectProperty(None)
 
     total_wins = ObjectProperty(None)
@@ -45,8 +45,9 @@ class Screen(Widget):
         Board.reset()
         self.myBet = ''
         self.mySide = ''
-        self.total_profit.text = "Total Profit: 0"
-        self.profit.text = "Current Profit: 0"
+        # self.total_profit.text = "Total Profit: 0"
+        self.micro_game_profit.text = "Micro-game Profit: 0"
+        self.money_count = "Money Count: 0"
         self.current_bet.text = "? bet on ?"
         self.total_wins.text = "P: 0     B: 0"
         self.total_bets.text = "# of bets: 0"
@@ -57,11 +58,6 @@ class Screen(Widget):
     def bet_pressed(self, bet, ind=None):
         if bet == 'B':
             Bet.base_bet()
-            # This base bet indicates that new game is starting
-            if len(Bet.profitHistory) != 0:
-                self.total_profit.text = 'Total Profit: ' + str(Bet.total_profit())
-                Bet.profit_reset()
-                self.profit.text = 'Current Profit: ' + str(Bet.profit)
             self.myBet = 'B'
             self.current_bet.text = 'B bet on ?'
         elif bet == "F":
@@ -74,6 +70,11 @@ class Screen(Widget):
             self.current_bet.text = 'L' + str(Bet.get_current_bet()) + ' bet on ?'
         else:
             pass
+
+    def end_micro_game(self):
+        if len(Bet.profitHistory) != 0:
+            Bet.profit_reset()
+            self.micro_game_profit.text = 'Micro-game Profit: ' + str(Bet.micro_game_profit)
 
     def bet_side(self, side):
         if self.myBet is None:
@@ -99,11 +100,12 @@ class Screen(Widget):
             Bet.placeHistory.append(len(Board.history) + 1)
             Bet.sideHistory.append(self.mySide)
             Bet.amtHistory.append(self.myBet)
-            Bet.profitHistory.append(Bet.profit)
+            Bet.profitHistory.append(Bet.micro_game_profit)
             amount = Bet.amtHistory[-1]
             if amount == 'B':
                 amount.lower()
-            self.profit.text = 'Current Profit: ' + str(Bet.profit)
+            self.micro_game_profit.text = 'Micro-game Profit: ' + str(Bet.micro_game_profit)
+            self.money_count.text = 'Money Count: ' + str(Bet.moneyCount)
             self.total_bets.text = '# of bets: ' + str(len(Bet.sideHistory))
             self.mySide = ''
 
@@ -134,22 +136,6 @@ class Screen(Widget):
                 self.board.text += '\n ' + amount + ' ' * 11 + last_winner + ' ' + checkmark
             else:                               # 0
                 self.board.text += '\n ' + amount + ' ' * 14 + last_winner  # 17
-        # if last_winner == 'P':
-        #     # To handle the format of the board
-        #     # Length of these lines must be 17 for the purpose of the mistake() function
-        #     if len(amount) > 1:
-        #         self.board.text += '\n ' + last_winner + '   ' + amount + ' ' * 7 + checkmark + ' '
-        #     elif len(amount) > 0:
-        #         self.board.text += '\n ' + last_winner + '   ' + amount + ' ' * 9 + checkmark
-        #     else:
-        #         self.board.text += '\n ' + last_winner + '   ' + amount + ' ' * 11  # 17
-        # elif last_winner == 'B':
-        #     if len(amount) > 1:     # 8           2            num     1           1        1       1
-        #         self.board.text += '\n       ' + amount + ' ' * 3 + last_winner + ' ' + checkmark + ' '
-        #     elif len(amount) > 0:               # 1
-        #         self.board.text += '\n       ' + amount + ' ' * 5 + last_winner + ' ' + checkmark
-        #     else:                               # 0
-        #         self.board.text += '\n       ' + amount + ' ' * 8 + last_winner  # 17
 
     def mistake(self):
         # The board cannot be empty
@@ -162,18 +148,11 @@ class Screen(Widget):
             if len(Bet.placeHistory) != 0 and Bet.placeHistory[-1] == len(Board.history) + 1:
                 # last_bet = Bet.sideHistory[-1]
                 # self.mySide = last_bet
-                if len(Bet.placeHistory) > 1:
-                    if Bet.profitHistory[-1] > Bet.profitHistory[-2]:
-                        Bet.undo_won_profit()
-                    elif Bet.profitHistory[-1] < Bet.profitHistory[-2]:
-                        Bet.undo_lost_profit()
-                elif len(Bet.placeHistory) == 1:
-                    Bet.profit = 0
-                else:
-                    print("Please reset shoe and start again")
+                Bet.undo_profit()
                 Bet.mistake()
                 self.current_bet.text = self.myBet + ' bet on ?'
-                self.profit.text = 'Current Profit: ' + str(Bet.profit)
+                self.micro_game_profit.text = 'Micro-game profit: ' + str(Bet.micro_game_profit)
+                self.money_count.text = 'Money Count: ' + str(Bet.moneyCount)
                 self.total_bets.text = '# of bets: ' + str(len(Bet.sideHistory))
 
             Board.mistake()
@@ -192,8 +171,10 @@ class Screen(Widget):
         bet_side = Bet.sideHistory
         bet_amt = Bet.amtHistory
         bet_profit = Bet.profitHistory
+        micro_game_history = Bet.endMicroGameHistory
 
         worksheet["A1"] = "TI Count"
+        worksheet['B1'] = "1A"
         worksheet["C1"] = "Player"
         worksheet["D1"] = "Banker"
         worksheet["E1"] = "Board"
@@ -219,14 +200,14 @@ class Screen(Widget):
                     bet_cell = worksheet.cell(column=3, row=bet_place[i], value=bet_amt[i])
 
                     # colors end of game
-                    if (i + 1 < len(bet_place) and bet_amt[i + 1] == 'B') or i + 1 == len(bet_place):
+                    if (i + 1 < len(bet_place) and i in micro_game_history) or i + 1 == len(bet_place):
                         bet_cell.fill = game_end
                         profit_cell.fill = game_end
                 elif bet_side[i] == 'B':
                     bet_cell = worksheet.cell(column=4, row=bet_place[i], value=bet_amt[i])
 
                     # colors end of game
-                    if (i + 1 < len(bet_place) and bet_amt[i + 1] == 'B') or i + 1 == len(bet_place):
+                    if (i + 1 < len(bet_place) and i in micro_game_history) or i + 1 == len(bet_place):
                         bet_cell.fill = game_end
                         profit_cell.fill = game_end
 
@@ -252,7 +233,7 @@ class Screen(Widget):
         # Marks total profits
         total_row = len(board) + 2
         total_cell = worksheet.cell(column=6, row=total_row, value='Total:')
-        total_amt = worksheet.cell(column=7, row=total_row, value=Bet.totalProfit)
+        total_amt = worksheet.cell(column=7, row=total_row, value=Bet.moneyCount)
         total_cell.alignment = Alignment(horizontal='left')
 
         total_cell.fill = total_color

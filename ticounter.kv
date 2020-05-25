@@ -1,7 +1,7 @@
 <Screen>:
 
-    total_profit:total_profit
-    profit:profit
+    micro_game_profit:micro_game_profit
+    money_count:money_count
     current_bet:current_bet
 
     total_wins:total_wins
@@ -47,10 +47,13 @@
                         on_press: root.bet_pressed('F', 4)
 
                 GridLayout:
-                    cols:1
+                    cols:3
                     Button:
                         text:"L2"
                         on_press: root.bet_pressed('L', 0)
+                    Button:
+                        text:"End micro-game"
+                        on_press: root.end_micro_game()
 
         GridLayout:
             cols:3
@@ -58,13 +61,12 @@
                 size_hint_x: 0.8
                 rows: 8
                 Label:
-                    id: total_profit
-                    text: "Total Profit: 0"
+                    id: micro_game_profit
+                    text: "Micro-game Profit: 0"
                     size_hint_y: 0.2
-
                 Label:
-                    id: profit
-                    text: "Current Profit: 0"
+                    id: money_count
+                    text: "Money Count: 0"
                     size_hint_y: 0.2
 
                 Label:

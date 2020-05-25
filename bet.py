@@ -9,10 +9,11 @@ class Bet:
     sideHistory = []
     amtHistory = []
     profitHistory = []
+    endMicroGameHistory = []
 
     currentBet = 0
-    totalProfit = 0
-    profit = 0
+    micro_game_profit = 0
+    moneyCount = 0
 
     @classmethod
     def reset(cls):
@@ -22,8 +23,8 @@ class Bet:
         cls.profitHistory = []
 
         cls.currentBet = 0
-        cls.totalProfit = 0
-        cls.profit = 0
+        cls.micro_game_profit = 0
+        cls.moneyCount = 0
 
     @classmethod
     def mistake(cls):
@@ -33,28 +34,25 @@ class Bet:
         del cls.profitHistory[-1]
 
     @classmethod
-    def undo_lost_profit(cls):
+    def undo_profit(cls):
         if len(cls.profitHistory) > 1:
-            cls.profit -= cls.profitHistory[-1] - cls.profitHistory[-2]
-        else:
-            cls.profit -= cls.profitHistory[-1]
-
-    @classmethod
-    def undo_won_profit(cls):
-        if len(cls.profitHistory) > 1:
-            cls.profit -= cls.profitHistory[-1] - cls.profitHistory[-2]
-        else:
-            cls.profit -= cls.profitHistory[-1]
+            takeout = cls.profitHistory[-1] - cls.profitHistory[-2]
+            cls.micro_game_profit -= takeout
+            cls.moneyCount -= takeout
+        elif len(cls.profitHistory) == 1:
+            cls.micro_game_profit -= cls.profitHistory[-1]
+            cls.moneyCount -= cls.profitHistory[-1]
 
     @classmethod
     def profit_reset(cls):
-        cls.profit = 0
+        cls.micro_game_profit = 0
+        cls.endMicroGameHistory.append(len(cls.profitHistory) - 1)
 
-    # Used for display to sidebar only
-    @classmethod
-    def total_profit(cls):
-        cls.totalProfit += cls.profit
-        return cls.totalProfit
+    # # Used for display to sidebar only
+    # @classmethod
+    # def total_profit(cls):
+    #     cls.totalProfit += cls.micro_game_profit
+    #     return cls.totalProfit
 
     @classmethod
     def base_bet(cls):
@@ -88,7 +86,9 @@ class Bet:
     @classmethod
     def bet_result(cls, win):
         if win:
-            cls.profit += cls.currentBet
+            cls.micro_game_profit += cls.currentBet
+            cls.moneyCount += cls.currentBet
         else:
-            cls.profit -= cls.currentBet
+            cls.micro_game_profit -= cls.currentBet
+            cls.moneyCount -= cls.currentBet
         return win
