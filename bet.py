@@ -1,7 +1,8 @@
 class Bet:
     base = 1
-    theForce = [2, 3, 5, 8]
-    theLadder = [2, 1, 2, 3, 4, 5]
+    theForce = [2, 1, 2, 3, 3]
+    theForceText = ['F2', 'xB', 'xF2', 'F3', 'xF3']
+    theLadder = 2
 
     # These lists are used when recording to excel
     placeHistory = []
@@ -64,8 +65,8 @@ class Bet:
         cls.currentBet = cls.theForce[num]
 
     @classmethod
-    def ladder_bet(cls, num):
-        cls.currentBet = cls.theLadder[num]
+    def ladder_bet(cls):
+        cls.currentBet = cls.theLadder
 
     @classmethod
     def get_current_bet(cls):

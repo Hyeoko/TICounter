@@ -29,40 +29,28 @@
                 cols:1
                 rows:2
                 GridLayout:
-                    cols:4
+                    cols:5
                     Button:
                         text:"F2"
                         on_press: root.bet_pressed('F', 0)
                     Button:
-                        text:"F3"
+                        text:"XB"
                         on_press: root.bet_pressed('F', 1)
                     Button:
-                        text:"F5"
+                        text:"XF2"
                         on_press: root.bet_pressed('F', 2)
                     Button:
-                        text:"F8"
+                        text:"F3"
                         on_press: root.bet_pressed('F', 3)
+                    Button:
+                        text:"XF3"
+                        on_press: root.bet_pressed('F', 4)
 
                 GridLayout:
-                    cols:6
+                    cols:1
                     Button:
                         text:"L2"
                         on_press: root.bet_pressed('L', 0)
-                    Button:
-                        text:"L1"
-                        on_press: root.bet_pressed('L', 1)
-                    Button:
-                        text:"L2"
-                        on_press: root.bet_pressed('L', 2)
-                    Button:
-                        text:"L3"
-                        on_press: root.bet_pressed('L', 3)
-                    Button:
-                        text:"L4"
-                        on_press: root.bet_pressed('L', 4)
-                    Button:
-                        text:"L5"
-                        on_press: root.bet_pressed('L', 5)
 
         GridLayout:
             cols:3

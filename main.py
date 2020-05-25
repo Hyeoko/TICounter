@@ -66,10 +66,10 @@ class Screen(Widget):
             self.current_bet.text = 'B bet on ?'
         elif bet == "F":
             Bet.force_bet(ind)
-            self.myBet = 'F' + str(Bet.get_current_bet())
-            self.current_bet.text = 'F' + str(Bet.get_current_bet()) + ' bet on ?'
+            self.myBet = Bet.theForceText[ind]
+            self.current_bet.text = Bet.theForceText[ind] + ' bet on ?'
         elif bet == "L":
-            Bet.ladder_bet(ind)
+            Bet.ladder_bet()
             self.myBet = 'L' + str(Bet.get_current_bet())
             self.current_bet.text = 'L' + str(Bet.get_current_bet()) + ' bet on ?'
         else:
@@ -117,14 +117,18 @@ class Screen(Widget):
         if last_winner == 'P':
             # To handle the format of the board
             # Length of these lines must be 17 for the purpose of the mistake() function
-            if len(amount) > 1:
+            if len(amount) > 2:
+                self.board.text += '\n ' + amount + ' ' + last_winner + ' ' * 7 + checkmark + ' ' * 2
+            elif len(amount) > 1:
                 self.board.text += '\n ' + amount + ' ' * 3 + last_winner + ' ' * 7 + checkmark + ' '
             elif len(amount) > 0:
                 self.board.text += '\n ' + amount + ' ' * 5 + last_winner + ' ' * 7 + checkmark
             else:
                 self.board.text += '\n ' + amount + ' ' * 8 + last_winner + ' ' * 6  # 17
         elif last_winner == 'B':
-            if len(amount) > 1:     # 8           2            num     1           1        1       1
+            if len(amount) > 2:
+                self.board.text += '\n ' + amount + ' ' * 7 + last_winner + ' ' + checkmark + ' ' * 2
+            elif len(amount) > 1:
                 self.board.text += '\n ' + amount + ' ' * 9 + last_winner + ' ' + checkmark + ' '
             elif len(amount) > 0:               # 1
                 self.board.text += '\n ' + amount + ' ' * 11 + last_winner + ' ' + checkmark
